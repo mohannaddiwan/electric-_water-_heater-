@@ -107,20 +107,20 @@ void ctrl_btn(int blink_counter){
 		++blink_counter;
 		
 		blink(temperature);
-		if(readbit(PINC,5) == 0){
+		if(readbit(PINC,5) == 0){ // increase btn clicked
 			blink_counter=0;
 			_delay_ms(10);
-			_count(temperature);
+			//_count(temperature);
 			if(temperature < MAX_VALUE){
 				temperature +=5;
 				EEPROM_Write(1,0x12,temperature);
 
 			}
 		}
-		if(readbit(PINC,6) == 0){
+		if(readbit(PINC,6) == 0){ // decrease btn clicked
 			blink_counter=0;
 			_delay_ms(10);
-			_count(temperature);
+			//_count(temperature);
 
 			if(temperature > MIN_VALUE){
 				temperature -=5;
@@ -162,35 +162,35 @@ void start(){
 		temperature = data;
 		unsigned long x = ADC_read(7); //Select chanel
 		unsigned long res = (x*500)/1023; 
-		setbit(PORTD,0);
+		setbit(PORTD,0); // turn on 7-segments
 		sensed_num++;
 		
 		if(sensed_num ==10){
 			_count(res);
 		if(res < (temperature - 5)){					
-			setbit(PORTC,2);
-			toggelbit(PORTC,7);
+			setbit(PORTC,2); // turn on heater element
+			toggelbit(PORTC,7); // blink led
 			_delay_ms(100);			
 
 		}else{
-		clearbit(PORTC,2);
+		clearbit(PORTC,2);// turn off heating element
 	}
 	
 		
 	 
 	   if (res > (temperature + 5)){
 			
-			setbit(PORTC,3);
-			setbit(PORTC,7);
+			setbit(PORTC,3);// turn on cooling element
+			setbit(PORTC,7);// turn on led
 			
 			}else{
-			clearbit(PORTC,7);
-			clearbit(PORTC,3);
+			clearbit(PORTC,7);// turn off led
+			clearbit(PORTC,3);// turn off cooling element
 		}
 		sensed_num=0;
  }
 			
-		if(readbit(PINC,5) == 0 || readbit(PINC,6) == 0){
+		if(readbit(PINC,5) == 0 || readbit(PINC,6) == 0){// check increase btn or decrease btn id clicked
 			int static blink_counter = 0;
 			ctrl_btn(blink_counter);
 		}
